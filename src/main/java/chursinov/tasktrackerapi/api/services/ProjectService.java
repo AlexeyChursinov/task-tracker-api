@@ -34,7 +34,7 @@ public class ProjectService {
         }
 
         if (projectRepository.findByName(validProjectName).isPresent()) {
-            throw new BadRequestException(String.format("Project \"%s\" already exist.", validProjectName));
+            throw new BadRequestException(String.format("Project %s already exist.", validProjectName));
         }
 
         ProjectEntity project = projectRepository.saveAndFlush(
