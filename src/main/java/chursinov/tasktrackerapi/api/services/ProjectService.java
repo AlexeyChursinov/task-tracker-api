@@ -9,14 +9,15 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-@Transactional
 @Service
 public class ProjectService {
 
@@ -26,18 +27,15 @@ public class ProjectService {
     @Transactional
     public ProjectDto createProject(String projectName) {
 
-        Optional<String> projectNameOptional = Optional.ofNullable(projectName);
+        String validProjectName = projectName.trim();
 
-        String validProjectName = projectNameOptional
-                .map(String::trim)
-                .filter(name -> !name.isEmpty())
-                .orElseThrow(() -> new BadRequestException("Project name should not be empty or contain only spaces."));
+        if (validProjectName.isEmpty()) {
+            throw new BadRequestException("Project name should not be empty or contain only spaces.");
+        }
 
-        projectRepository
-                .findByName(validProjectName)
-                .ifPresent(project -> {
-                    throw new BadRequestException(String.format("Project \"%s\" already exist.", validProjectName));
-                });
+        if (projectRepository.findByName(validProjectName).isPresent()) {
+            throw new BadRequestException(String.format("Project \"%s\" already exist.", validProjectName));
+        }
 
         ProjectEntity project = projectRepository.saveAndFlush(
                 ProjectEntity.builder()
@@ -46,6 +44,20 @@ public class ProjectService {
         );
 
         return projectDtoFactory.makeProjectDto(project);
+    }
+
+    @Transactional
+    public List<ProjectDto> fetchProjects(Optional<String> optionalPrefixName) {
+
+        optionalPrefixName = optionalPrefixName.filter(prefixName -> !prefixName.trim().isEmpty());
+
+        Stream<ProjectEntity> projectStream = optionalPrefixName
+                .map(projectRepository::streamAllByNameStartsWithIgnoreCase)
+                .orElseGet(projectRepository::streamAllBy);
+
+        return projectStream
+                .map(projectDtoFactory::makeProjectDto)
+                .collect(Collectors.toList());
     }
 }
 
