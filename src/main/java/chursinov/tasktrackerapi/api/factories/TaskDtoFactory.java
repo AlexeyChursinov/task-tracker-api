@@ -20,9 +20,4 @@ public class TaskDtoFactory {
                 .build();
     }
 
-    public List<TaskDto> makeTaskDtoList(List<TaskEntity> taskEntities) {
-        return taskEntities.stream()
-                .map(this::makeTaskDto)
-                .collect(Collectors.toList());
-    }
 }

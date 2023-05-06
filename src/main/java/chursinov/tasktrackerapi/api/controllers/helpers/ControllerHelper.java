@@ -18,7 +18,6 @@ public class ControllerHelper {
     ProjectRepository projectRepository;
 
     public void getProjectOrThrowException(Long projectId) {
-
         projectRepository
                 .findById(projectId)
                 .orElseThrow(() ->

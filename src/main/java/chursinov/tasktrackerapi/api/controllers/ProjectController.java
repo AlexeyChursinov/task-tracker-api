@@ -9,16 +9,12 @@ import chursinov.tasktrackerapi.api.services.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
-
 
 import java.util.List;
 import java.util.Optional;
 
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/projects")
@@ -35,7 +31,7 @@ public class ProjectController {
 
     @GetMapping(value = FETCH_PROJECT, produces = "application/json")
     @Operation(summary = "Get projects")
-    @ApiResponse(responseCode = "200", description = "Project successfully deleted")
+    @ApiResponse(responseCode = "200", description = "Project successfully received")
     public List<ProjectDto> fetchProjects(
             @RequestParam(value = "prefix_name", required = false) Optional<String> optionalPrefixName) {
 
@@ -44,7 +40,7 @@ public class ProjectController {
 
     @PostMapping(value = CREATE_PROJECT, produces = "application/json")
     @Operation(summary = "Create project")
-    @ApiResponse(responseCode = "200", description = "Project successfully deleted")
+    @ApiResponse(responseCode = "200", description = "Project successfully created")
     public ProjectDto createProject(
             @RequestParam(value = "project_name") String projectName) {
 
@@ -53,7 +49,7 @@ public class ProjectController {
 
     @PutMapping(value = UPDATE_PROJECT, produces = "application/json")
     @Operation(summary = "Update project")
-    @ApiResponse(responseCode = "200", description = "Project successfully deleted")
+    @ApiResponse(responseCode = "200", description = "Project successfully updated")
     @ErrorResponse400
     @ErrorResponse404
     public ProjectDto updateProject(
@@ -76,5 +72,4 @@ public class ProjectController {
 
         return AnswerDto.makeDefault(true);
     }
-
 }
