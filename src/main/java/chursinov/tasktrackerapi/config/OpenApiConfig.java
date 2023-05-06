@@ -1,7 +1,6 @@
 package chursinov.tasktrackerapi.config;
 
-import io.swagger.v3.oas.models.Components;
-import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.*;
 import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +12,7 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .components(new Components())
-                .info(new Info().title("Users Application API").description(
+                .info(new Info().title("Task Tracker Application API").description(
                         "This is a sample Spring Boot RESTful service using springdoc-openapi and OpenAPI 3."));
     }
 }

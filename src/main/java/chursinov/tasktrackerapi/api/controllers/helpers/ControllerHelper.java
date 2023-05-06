@@ -1,7 +1,6 @@
 package chursinov.tasktrackerapi.api.controllers.helpers;
 
 import chursinov.tasktrackerapi.api.exceptions.NotFoundException;
-import chursinov.tasktrackerapi.store.entities.ProjectEntity;
 import chursinov.tasktrackerapi.store.repositories.ProjectRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -18,17 +17,12 @@ public class ControllerHelper {
 
     ProjectRepository projectRepository;
 
-    public ProjectEntity getProjectOrThrowException(Long projectId) {
+    public void getProjectOrThrowException(Long projectId) {
 
-        return projectRepository
+        projectRepository
                 .findById(projectId)
                 .orElseThrow(() ->
-                        new NotFoundException(
-                                String.format(
-                                        "Project with \"%s\" doesn't exist.",
-                                        projectId
-                                )
-                        )
+                        new NotFoundException(String.format("Project with %s doesn't exist.", projectId))
                 );
     }
 }
