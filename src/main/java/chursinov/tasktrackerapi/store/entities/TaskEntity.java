@@ -8,9 +8,6 @@ import lombok.experimental.FieldDefaults;
 import javax.persistence.*;
 import java.time.Instant;
 
-import static chursinov.tasktrackerapi.store.enums.TaskPriorityEnum.*;
-import static chursinov.tasktrackerapi.store.enums.TaskStatusEnum.*;
-
 @Setter
 @Getter
 @Builder
@@ -22,20 +19,22 @@ import static chursinov.tasktrackerapi.store.enums.TaskStatusEnum.*;
 public class TaskEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     String name;
 
     String description;
 
-    @Builder.Default
-    TaskStatusEnum taskStatusEnum = NEW;
+    TaskStatusEnum taskStatus;
 
-    @Builder.Default
-    TaskPriorityEnum taskPriority = MEDIUM;
+    TaskPriorityEnum taskPriority;
 
     @Builder.Default
     Instant createdAt = Instant.now();
+
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private ProjectEntity project;
 
 }

@@ -9,6 +9,7 @@ import chursinov.tasktrackerapi.api.services.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +22,8 @@ import java.util.Optional;
 @Tag(name = "Projects", description = "Projects controller")
 public class ProjectController {
 
+    @NonNull
     ProjectService projectService;
-    ControllerHelper controllerHelper;
 
     public static final String FETCH_PROJECT = "/get-projects";
     public static final String CREATE_PROJECT = "/create-project";
@@ -31,7 +32,7 @@ public class ProjectController {
 
     @GetMapping(value = FETCH_PROJECT, produces = "application/json")
     @Operation(summary = "Get projects")
-    @ApiResponse(responseCode = "200", description = "Project successfully received")
+    @ApiResponse(responseCode = "200", description = "Projects successfully received")
     public List<ProjectDto> fetchProjects(
             @RequestParam(value = "prefix_name", required = false) Optional<String> optionalPrefixName) {
 
@@ -65,8 +66,6 @@ public class ProjectController {
     @ApiResponse(responseCode = "200", description = "Project successfully deleted")
     @ErrorResponse404
     public AnswerDto deleteProject(@PathVariable("project_id") Long projectId) {
-
-        controllerHelper.getProjectOrThrowException(projectId);
 
         projectService.deleteProject(projectId);
 

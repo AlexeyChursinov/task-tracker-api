@@ -1,5 +1,6 @@
 package chursinov.tasktrackerapi.api.services;
 
+import chursinov.tasktrackerapi.api.controllers.helpers.ControllerHelper;
 import chursinov.tasktrackerapi.api.dto.ProjectDto;
 import chursinov.tasktrackerapi.api.exceptions.BadRequestException;
 import chursinov.tasktrackerapi.api.exceptions.NotFoundException;
@@ -7,6 +8,7 @@ import chursinov.tasktrackerapi.api.factories.ProjectDtoFactory;
 import chursinov.tasktrackerapi.store.entities.ProjectEntity;
 import chursinov.tasktrackerapi.store.repositories.ProjectRepository;
 import lombok.AccessLevel;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
@@ -23,8 +25,14 @@ import java.util.stream.Stream;
 @Service
 public class ProjectService {
 
+    @NonNull
     ProjectRepository projectRepository;
+
+    @NonNull
     ProjectDtoFactory projectDtoFactory;
+
+    @NonNull
+    ControllerHelper controllerHelper;
 
     @Transactional(readOnly = true)
     public List<ProjectDto> fetchProjects(Optional<String> optionalPrefixName) {
@@ -50,7 +58,7 @@ public class ProjectService {
         }
 
         if (projectRepository.findByName(validProjectName).isPresent()) {
-            throw new BadRequestException(String.format("Project with name %s already exist.", validProjectName));
+            throw new BadRequestException(String.format("Project with name = %s already exist.", validProjectName));
         }
 
         ProjectEntity project = projectRepository.saveAndFlush(
@@ -87,6 +95,9 @@ public class ProjectService {
 
     @Transactional
     public void deleteProject(Long projectId) {
+
+        controllerHelper.getProjectOrThrowException(projectId);
+
         projectRepository.deleteById(projectId);
     }
 }

@@ -17,7 +17,7 @@ import java.util.List;
 public class ProjectEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true)
@@ -29,8 +29,6 @@ public class ProjectEntity {
     @Builder.Default
     private Instant createAt = Instant.now();
 
-    @Builder.Default
-    @OneToMany
-    @JoinColumn(name = "project_id")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     private List<TaskEntity> tasks = new ArrayList<>();
 }

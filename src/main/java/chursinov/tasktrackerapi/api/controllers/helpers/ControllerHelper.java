@@ -21,7 +21,7 @@ public class ControllerHelper {
         projectRepository
                 .findById(projectId)
                 .orElseThrow(() ->
-                        new NotFoundException(String.format("Project with %s doesn't exist.", projectId))
+                        new NotFoundException(String.format("Project with id = %s doesn't exist.", projectId))
                 );
     }
 }

@@ -1,7 +1,13 @@
 package chursinov.tasktrackerapi.api.services;
 
+import chursinov.tasktrackerapi.api.dto.CreateTaskDto;
 import chursinov.tasktrackerapi.api.dto.TaskDto;
+import chursinov.tasktrackerapi.api.exceptions.BadRequestException;
+import chursinov.tasktrackerapi.api.exceptions.NotFoundException;
 import chursinov.tasktrackerapi.api.factories.TaskDtoFactory;
+import chursinov.tasktrackerapi.store.entities.ProjectEntity;
+import chursinov.tasktrackerapi.store.entities.TaskEntity;
+import chursinov.tasktrackerapi.store.repositories.ProjectRepository;
 import chursinov.tasktrackerapi.store.repositories.TaskRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +21,32 @@ import org.springframework.transaction.annotation.Transactional;
 public class TaskService {
 
     TaskRepository taskRepository;
+    ProjectRepository projectRepository;
+
     TaskDtoFactory taskDtoFactory;
 
     @Transactional
-    public TaskDto createTask(TaskDto task) {
+    public TaskDto createTask(CreateTaskDto task, Long projectId) {
 
-        return null;
+        ProjectEntity projectEntity = projectRepository.findById(projectId)
+                .orElseThrow(() -> new NotFoundException(String.format("Project with id %d not found", projectId)));
+
+        String validTaskName = task.getName().trim();
+
+        if (validTaskName.isEmpty()) {
+            throw new BadRequestException("Task name should not be empty or contain only spaces.");
+        }
+
+        TaskEntity taskEntity = TaskEntity.builder()
+                .name(validTaskName)
+                .description(task.getDescription())
+                .project(projectEntity)
+                .taskStatus(task.getTaskStatus())
+                .taskPriority(task.getTaskPriority())
+                .build();
+
+        taskEntity = taskRepository.saveAndFlush(taskEntity);
+
+        return taskDtoFactory.makeTaskDto(taskEntity);
     }
 }
