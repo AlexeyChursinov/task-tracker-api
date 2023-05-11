@@ -1,6 +1,5 @@
 package chursinov.tasktrackerapi.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -22,11 +21,9 @@ public class ProjectDto {
     String name;
 
     @NonNull
-    @JsonProperty("created_at")
     Instant createdAt;
 
     @NonNull
-    @JsonProperty("updated_at")
     Instant updatedAt;
 
     List<TaskDto> tasks = new ArrayList<>();;

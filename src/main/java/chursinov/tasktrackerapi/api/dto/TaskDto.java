@@ -2,12 +2,13 @@ package chursinov.tasktrackerapi.api.dto;
 
 import chursinov.tasktrackerapi.store.enums.TaskPriorityEnum;
 import chursinov.tasktrackerapi.store.enums.TaskStatusEnum;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.time.Instant;
 
 @Data
@@ -25,7 +26,6 @@ public class TaskDto {
     String name;
 
     @NonNull
-    @JsonProperty("created_at")
     Instant createdAt;
 
     @NonNull

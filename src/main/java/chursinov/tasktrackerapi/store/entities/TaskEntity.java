@@ -26,8 +26,10 @@ public class TaskEntity {
 
     String description;
 
+    @Enumerated(EnumType.STRING)
     TaskStatusEnum taskStatus;
 
+    @Enumerated(EnumType.STRING)
     TaskPriorityEnum taskPriority;
 
     @Builder.Default
