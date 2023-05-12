@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class TaskController {
 
     public static final String CREATE_TASK = "/create-task";
+    public static final String UPDATE_TASK = "/update-task";
 
     @NonNull
     TaskService taskService;
@@ -27,11 +28,22 @@ public class TaskController {
     @Operation(summary = "Create task")
     @ApiResponse(responseCode = "200", description = "Task successfully created")
     @ErrorResponse400
-    public TaskDto createProject(@RequestBody CreateTaskDto task,
+    public TaskDto createTask(@RequestBody CreateTaskDto task,
                                  @Parameter(description = "Project ID")
                                  @RequestParam("id") Long projectId) {
 
         return taskService.createTask(task, projectId);
+    }
+
+    @PutMapping(value = UPDATE_TASK, produces = "application/json")
+    @Operation(summary = "Update task")
+    @ApiResponse(responseCode = "200", description = "Task successfully updated")
+    @ErrorResponse400
+    public TaskDto updateTask(@RequestBody CreateTaskDto task,
+                              @RequestParam Long projectId,
+                              @RequestParam Long taskId) {
+
+        return taskService.updateTask(task, projectId, taskId);
     }
 
 }
