@@ -17,6 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
@@ -29,6 +33,16 @@ public class TaskService {
     TaskDtoFactory taskDtoFactory;
 
     ControllerHelper controllerHelper;
+
+    @Transactional(readOnly = true)
+    public List<TaskDto> getAllTasks() {
+
+        Stream<TaskEntity> tasks = taskRepository.streamAllBy();
+
+        return tasks
+                .map(taskDtoFactory::makeTaskDto)
+                .collect(Collectors.toList());
+    }
 
     @Transactional
     public TaskDto createTask(CreateTaskDto task, Long projectId) {

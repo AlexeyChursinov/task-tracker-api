@@ -22,6 +22,7 @@ import java.util.Optional;
 public class ProjectController {
 
     public static final String MEDIA_TYPE = "application/json";
+
     public static final String FETCH_PROJECT = "/get-projects";
     public static final String GET_PROJECT = "/get-project/{id}";
     public static final String CREATE_PROJECT = "/create-project";

@@ -14,19 +14,32 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/tasks")
 @Tag(name = "Tasks", description = "Tasks controller")
 public class TaskController {
 
+    public static final String MEDIA_TYPE = "application/json";
+
+    public static final String GET_TASK = "/get-tasks";
     public static final String CREATE_TASK = "/create-task";
     public static final String UPDATE_TASK = "/update-task";
     public static final String DELETE_TASK = "/delete-task/{id}";
 
     private final TaskService taskService;
 
-    @PostMapping(value = CREATE_TASK, produces = "application/json")
+    @GetMapping(value = GET_TASK, produces = MEDIA_TYPE)
+    @Operation(summary = "Get all tasks")
+    @ApiResponse(responseCode = "200", description = "Tasks successfully received")
+    public List<TaskDto> getAllTasks() {
+
+        return taskService.getAllTasks();
+    }
+
+    @PostMapping(value = CREATE_TASK, produces = MEDIA_TYPE)
     @Operation(summary = "Create task")
     @ApiResponse(responseCode = "200", description = "Task successfully created")
     @ErrorResponse400
@@ -37,7 +50,7 @@ public class TaskController {
         return taskService.createTask(task, projectId);
     }
 
-    @PutMapping(value = UPDATE_TASK, produces = "application/json")
+    @PutMapping(value = UPDATE_TASK, produces = MEDIA_TYPE)
     @Operation(summary = "Update task")
     @ApiResponse(responseCode = "200", description = "Task successfully updated")
     @ErrorResponse400
@@ -48,7 +61,7 @@ public class TaskController {
         return taskService.updateTask(task, projectId, taskId);
     }
 
-    @DeleteMapping(value = DELETE_TASK, produces = "application/json")
+    @DeleteMapping(value = DELETE_TASK, produces = MEDIA_TYPE)
     @Operation(summary = "Delete task")
     @ApiResponse(responseCode = "200", description = "Task successfully deleted")
     @ErrorResponse400
