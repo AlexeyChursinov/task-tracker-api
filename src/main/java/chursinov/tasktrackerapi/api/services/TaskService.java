@@ -8,12 +8,15 @@ import chursinov.tasktrackerapi.api.exceptions.NotFoundException;
 import chursinov.tasktrackerapi.api.factories.TaskDtoFactory;
 import chursinov.tasktrackerapi.store.entities.ProjectEntity;
 import chursinov.tasktrackerapi.store.entities.TaskEntity;
+import chursinov.tasktrackerapi.store.enums.TaskPriorityEnum;
+import chursinov.tasktrackerapi.store.enums.TaskStatusEnum;
 import chursinov.tasktrackerapi.store.repositories.ProjectRepository;
 import chursinov.tasktrackerapi.store.repositories.TaskRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.EnumUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
