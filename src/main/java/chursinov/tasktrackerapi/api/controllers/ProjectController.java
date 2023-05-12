@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,16 +21,17 @@ import java.util.Optional;
 @Tag(name = "Projects", description = "Projects controller")
 public class ProjectController {
 
+    public static final String MEDIA_TYPE = "application/json";
     public static final String FETCH_PROJECT = "/get-projects";
+    public static final String GET_PROJECT = "/get-project/{id}";
     public static final String CREATE_PROJECT = "/create-project";
     public static final String UPDATE_PROJECT = "/update-project/{id}";
     public static final String DELETE_PROJECT = "/delete-project/{id}";
 
-    @NonNull
-    ProjectService projectService;
+    private final ProjectService projectService;
 
-    @GetMapping(value = FETCH_PROJECT, produces = "application/json")
-    @Operation(summary = "Get projects")
+    @GetMapping(value = FETCH_PROJECT, produces = MEDIA_TYPE)
+    @Operation(summary = "Get all projects")
     @ApiResponse(responseCode = "200", description = "Projects successfully received")
     @ErrorResponse400
     public List<ProjectDto> fetchProjects(
@@ -40,7 +40,17 @@ public class ProjectController {
         return projectService.fetchProjects(optionalPrefixName);
     }
 
-    @PostMapping(value = CREATE_PROJECT, produces = "application/json")
+    @GetMapping(value = GET_PROJECT, produces = MEDIA_TYPE)
+    @Operation(summary = "Get project by ID")
+    @ApiResponse(responseCode = "200", description = "Project successfully received")
+    @ErrorResponse400
+    public ProjectDto getProject(@Parameter(description = "Project ID")
+                                 @PathVariable("id") Long projectId) {
+
+        return projectService.getProject(projectId);
+    }
+
+    @PostMapping(value = CREATE_PROJECT, produces = MEDIA_TYPE)
     @Operation(summary = "Create project")
     @ApiResponse(responseCode = "200", description = "Project successfully created")
     @ErrorResponse400
@@ -50,7 +60,7 @@ public class ProjectController {
         return projectService.createProject(projectName);
     }
 
-    @PutMapping(value = UPDATE_PROJECT, produces = "application/json")
+    @PutMapping(value = UPDATE_PROJECT, produces = MEDIA_TYPE)
     @Operation(summary = "Update project")
     @ApiResponse(responseCode = "200", description = "Project successfully updated")
     @ErrorResponse400
@@ -65,7 +75,7 @@ public class ProjectController {
 
     }
 
-    @DeleteMapping(value = DELETE_PROJECT, produces = "application/json")
+    @DeleteMapping(value = DELETE_PROJECT, produces = MEDIA_TYPE)
     @Operation(summary = "Delete project")
     @ApiResponse(responseCode = "200", description = "Project successfully deleted")
     @ErrorResponse400
@@ -75,6 +85,6 @@ public class ProjectController {
 
         projectService.deleteProject(projectId);
 
-        return AnswerDto.makeDefault(true);
+        return AnswerDto.makeDefault("Project successfully deleted");
     }
 }

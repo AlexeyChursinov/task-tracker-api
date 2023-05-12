@@ -8,9 +8,9 @@ import chursinov.tasktrackerapi.api.factories.ProjectDtoFactory;
 import chursinov.tasktrackerapi.store.entities.ProjectEntity;
 import chursinov.tasktrackerapi.store.repositories.ProjectRepository;
 import lombok.AccessLevel;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,18 +20,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @Service
 public class ProjectService {
 
-    @NonNull
     ProjectRepository projectRepository;
 
-    @NonNull
     ProjectDtoFactory projectDtoFactory;
 
-    @NonNull
     ControllerHelper controllerHelper;
 
     @Transactional(readOnly = true)
@@ -46,6 +44,17 @@ public class ProjectService {
         return projectStream
                 .map(projectDtoFactory::makeProjectDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public ProjectDto getProject(Long projectId) {
+
+        return projectDtoFactory.makeProjectDto(
+               projectRepository
+                .findById(projectId)
+                .orElseThrow(() ->
+                        new NotFoundException(String.format("Project with id = %s doesn't exist.", projectId))
+                ));
     }
 
     @Transactional
@@ -92,13 +101,17 @@ public class ProjectService {
         return projectDtoFactory.makeProjectDto(updatedProject);
     }
 
-
     @Transactional
     public void deleteProject(Long projectId) {
 
         controllerHelper.getProjectOrThrowException(projectId);
 
-        projectRepository.deleteById(projectId);
+        try {
+            projectRepository.deleteById(projectId);
+        } catch (Exception e) {
+            log.error("Failed to delete project with ID " + projectId + ".", e);
+            throw new BadRequestException("Failed to delete project with ID " + projectId + ".");
+        }
     }
 }
 

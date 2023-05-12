@@ -10,9 +10,9 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AnswerDto {
 
-    Boolean answer;
+    String answer;
 
-    public static AnswerDto makeDefault(Boolean answer) {
+    public static AnswerDto makeDefault(String answer) {
         return builder()
                 .answer(answer)
                 .build();

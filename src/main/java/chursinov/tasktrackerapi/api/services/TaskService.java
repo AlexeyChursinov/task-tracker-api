@@ -13,9 +13,11 @@ import chursinov.tasktrackerapi.store.repositories.TaskRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @Service
@@ -79,4 +81,18 @@ public class TaskService {
 
         return taskDtoFactory.makeTaskDto(taskEntity);
     }
+
+    @Transactional
+    public void deleteTask(Long taskId) {
+
+        controllerHelper.getTaskOrThrowException(taskId);
+
+        try {
+            taskRepository.deleteById(taskId);
+        } catch (Exception e) {
+            log.error("Failed to delete task with ID " + taskId + ".", e);
+            throw new BadRequestException("Failed to delete task with ID " + taskId + ".");
+        }
+    }
+
 }
