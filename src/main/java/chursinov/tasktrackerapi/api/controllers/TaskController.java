@@ -22,12 +22,12 @@ import java.util.List;
 @Tag(name = "Tasks", description = "Tasks controller")
 public class TaskController {
 
-    public static final String MEDIA_TYPE = "application/json";
+    private static final String MEDIA_TYPE = "application/json";
 
-    public static final String GET_TASK = "/get-tasks";
-    public static final String CREATE_TASK = "/create-task";
-    public static final String UPDATE_TASK = "/update-task";
-    public static final String DELETE_TASK = "/delete-task/{id}";
+    private static final String GET_TASK = "/get-tasks";
+    private static final String CREATE_TASK = "/create-task";
+    private static final String UPDATE_TASK = "/update-task";
+    private static final String DELETE_TASK = "/delete-task/{id}";
 
     private final TaskService taskService;
 

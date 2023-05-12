@@ -23,11 +23,11 @@ public class ProjectController {
 
     public static final String MEDIA_TYPE = "application/json";
 
-    public static final String FETCH_PROJECT = "/get-projects";
-    public static final String GET_PROJECT = "/get-project/{id}";
-    public static final String CREATE_PROJECT = "/create-project";
-    public static final String UPDATE_PROJECT = "/update-project/{id}";
-    public static final String DELETE_PROJECT = "/delete-project/{id}";
+    private static final String FETCH_PROJECT = "/get-projects";
+    private static final String GET_PROJECT = "/get-project/{id}";
+    private static final String CREATE_PROJECT = "/create-project";
+    private static final String UPDATE_PROJECT = "/update-project/{id}";
+    private static final String DELETE_PROJECT = "/delete-project/{id}";
 
     private final ProjectService projectService;
 
