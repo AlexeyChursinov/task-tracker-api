@@ -35,11 +35,11 @@ public class ProjectService {
     @Transactional(readOnly = true)
     public List<ProjectDto> fetchProjects(Optional<String> optionalPrefixName) {
 
-        optionalPrefixName = optionalPrefixName.filter(prefixName -> !prefixName.trim().isEmpty());
+        String prefixName = optionalPrefixName.orElse(null);
 
-        Stream<ProjectEntity> projectStream = optionalPrefixName
-                .map(projectRepository::streamAllByNameStartsWithIgnoreCase)
-                .orElseGet(projectRepository::streamAllBy);
+        Stream<ProjectEntity> projectStream = prefixName == null
+                ? projectRepository.streamAllBy()
+                : projectRepository.streamAllByNameStartsWithIgnoreCase(prefixName);
 
         return projectStream
                 .map(projectDtoFactory::makeProjectDto)
@@ -48,57 +48,38 @@ public class ProjectService {
 
     @Transactional(readOnly = true)
     public ProjectDto getProject(Long projectId) {
+        ProjectEntity projectEntity = projectRepository.findById(projectId)
+                .orElseThrow(() -> new NotFoundException(String.format("Project with id %d not found", projectId)));
 
-        return projectDtoFactory.makeProjectDto(
-               projectRepository
-                .findById(projectId)
-                .orElseThrow(() ->
-                        new NotFoundException(String.format("Project with id = %s doesn't exist.", projectId))
-                ));
+        return projectDtoFactory.makeProjectDto(projectEntity);
     }
+
 
     @Transactional
     public ProjectDto createProject(String projectName) {
 
-        String validProjectName = projectName.trim();
-
-        if (validProjectName.isEmpty()) {
-            throw new BadRequestException("Project name should not be empty or contain only spaces.");
-        }
-
-        if (projectRepository.findByName(validProjectName).isPresent()) {
-            throw new BadRequestException(String.format("Project with name = %s already exist.", validProjectName));
-        }
+        validateProjectName(projectName);
 
         ProjectEntity project = projectRepository.saveAndFlush(
                 ProjectEntity.builder()
-                        .name(validProjectName)
+                        .name(projectName)
                         .build()
         );
 
         return projectDtoFactory.makeProjectDto(project);
     }
 
-    @Transactional
     public ProjectDto updateProject(Long projectId, String projectName) {
         ProjectEntity projectEntity = projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundException(String.format("Project with id %d not found", projectId)));
 
-        String validProjectName = projectName.trim();
+        validateProjectName(projectName);
 
-        if (validProjectName.isEmpty()) {
-            throw new BadRequestException("Project name should not be empty or contain only spaces.");
-        }
-
-        if (projectRepository.findByName(validProjectName).isPresent()) {
-            throw new BadRequestException(String.format("Project %s already exist.", validProjectName));
-        }
-
-        projectEntity.setName(validProjectName);
+        projectEntity.setName(projectName);
         projectEntity.setUpdatedAt(Instant.now());
-        ProjectEntity updatedProject = projectRepository.saveAndFlush(projectEntity);
+        projectRepository.saveAndFlush(projectEntity);
 
-        return projectDtoFactory.makeProjectDto(updatedProject);
+        return projectDtoFactory.makeProjectDto(projectEntity);
     }
 
     @Transactional
@@ -106,11 +87,16 @@ public class ProjectService {
 
         controllerHelper.getProjectOrThrowException(projectId);
 
-        try {
-            projectRepository.deleteById(projectId);
-        } catch (Exception e) {
-            log.error("Failed to delete project with ID " + projectId + ".", e);
-            throw new BadRequestException("Failed to delete project with ID " + projectId + ".");
+        projectRepository.deleteById(projectId);
+    }
+
+    private void validateProjectName(String projectName) {
+        if (projectName.isEmpty()) {
+            throw new BadRequestException("Project name should not be empty or contain only spaces.");
+        }
+
+        if (projectRepository.findByName(projectName).isPresent()) {
+            throw new BadRequestException(String.format("Project %s already exist.", projectName));
         }
     }
 }
